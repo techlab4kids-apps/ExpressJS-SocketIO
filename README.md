@@ -10,3 +10,10 @@ Specifically, this server allows messages exchange between devices supported by 
 - [x] Connects to Flespi service to allow data exchange even between devices on different networks
 - [ ] Will expose mqtt broker capabilites (not fully implemented for now)
 - [ ] Code starts as a POC so it started from forked github boilerplate
+
+
+## Single file executable build
+* Set node version to 16.9.0 via nvm (nvm install 16.19.0)
+* Run npm i
+* Install pkg (npm i pkg -g)
+* Run pkg (nvm exec 16.19.0 pkg server.js)
