@@ -113,6 +113,13 @@ const io = require('socket.io')(httpServer, {
 });
 
 async function handleIoSocketEvent(eventName, currentSocketId, ...args) {
+
+    if(eventName == "mqtt command"){
+        let messageObject = args[0];
+        const deviceId = messageObject.deviceId;
+        const topic = `tl4k/devices/${deviceId}/command`;
+        client.publish(topic, JSON.stringify(messageObject));
+    }
     const sockets = await io.fetchSockets()
     sockets.forEach(socket => {
         if(socket.id != currentSocketId){
@@ -153,8 +160,21 @@ client.on('message', (topic, message) => {
     }
 
     if (topic.includes('data')) {
-        io.emit('mqtt data', messageObject);
+        const regExp = new RegExp('tl4k\/devices\/(.*?)\/data');
+        let deviceId = ""
+
+        let match = regExp.exec(topic);
+        if(match) {
+            deviceId = match[1]
+            console.log(deviceId);
+            messageObject.deviceId = deviceId;
+            io.emit('mqtt data', messageObject);
+        }
     } else if (topic.includes('command')) {
+        // TODO add recipient to Mblock message
+        const deviceId = messageObject.deviceId;
+        const topic = `tl4k/devices/${deviceId}/command`;
+        client.publish(topic, messageObject);
         io.emit('mqtt command', messageObject);
     } else {
         io.emit('mqtt message', messageObject);
