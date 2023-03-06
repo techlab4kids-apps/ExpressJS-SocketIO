@@ -1,0 +1,14 @@
+{
+  "brokerUrl": "wss://mqtt.flespi.io",
+  "username": "FlespiToken ZZUuFrUpQdGIC5uV34q0esnHVEqzQnyGaiYGzITdJpKcl2VeVb2XudvdHJAmUYQV",
+  "password": "",
+  "clientId": "TL4K-SocketIO_",
+  "topics": [
+    "tl4k/devices/+/data",
+    "tl4k/devices/+/command",
+    "tl4k/sensornode"
+  ]
+}
+
+
+
