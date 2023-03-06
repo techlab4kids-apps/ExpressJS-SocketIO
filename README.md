@@ -11,6 +11,9 @@ Specifically, this server allows messages exchange between devices supported by 
 - [ ] Will expose mqtt broker capabilites (not fully implemented for now)
 - [ ] Code starts as a POC so it started from forked github boilerplate
 
+## :wrench: Configuration
+
+Edit config.json file in the same folder of the executable file.
 
 ## Single file executable build
 * Set node version to 16.9.0 via nvm (nvm install 16.19.0)
