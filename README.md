@@ -15,7 +15,7 @@ Specifically, this server allows messages exchange between devices supported by 
 
 Edit config.json file in the same folder of the executable file.
 
-## Single file executable build
+## :factory: Single file executable build
 * Set node version to 16.9.0 via nvm (nvm install 16.19.0)
 * Run npm i
 * Install pkg (npm i pkg -g)
