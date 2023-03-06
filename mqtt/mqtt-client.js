@@ -1,19 +1,7 @@
 const mqtt = require('mqtt');
+const { MQTT_SETTINGS } = require('../config');
 
 
-const flespiConfig = {
-    username: "FlespiToken sVOnzW676JCdey42x2AcIMKdn5XUeeJu0lIn8Cj29J4e7Y4uOuuk42ohXb20fzk3",
-    password: "",
-    clientId: "TL4K-SocketIO"
-}
-
-const localConfig = {
-    host: new URL("http://localhost"),
-    port: 1883,
-    username: "",
-    password: "",
-    clientId: "TL4K-SocketIO-Mqtt-Proxy"
-}
 
 /*
     Agrumino data mqtt payload
@@ -49,13 +37,13 @@ const localConfig = {
  */
 
 // let client = mqtt.connect("mqtt://test.mosquitto.org")
-let client = mqtt.connect("wss://mqtt.flespi.io", flespiConfig)
 
-const topics = ["tl4k/devices/+/data", "tl4k/devices/+/command", "tl4k/sensornode"]
+let client = mqtt.connect(MQTT_SETTINGS.brokerUrl, MQTT_SETTINGS)
+
 
 client.on('connect', () => {
-    console.log("Connected to Flespi broker with client!")
-    topics.forEach((topic) => {
+    console.log("Connected to Flespi broker with clientID: ", MQTT_SETTINGS.clientId)
+    MQTT_SETTINGS.topics.forEach((topic) => {
         console.log("Subscribing to topic: ", topic)
         client.subscribe(topic)
     })

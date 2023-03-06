@@ -71,6 +71,7 @@ if (srvConfig.HTTPS_ENABLED) {
  * Start http server & connect to MongoDB
  */
 httpServer.listen(srvConfig.SERVER_PORT, () => {
+    console.log('SocketIO server listening on port ', srvConfig.SERVER_PORT);
     // mongoose.connect(`${CONNECTION_TYPE}://${dbAuthString}${DB_HOST}:${DB_PORT}/${DB_NAME}${DB_QUERY_PARAMS}`, {
     //     useNewUrlParser: true,
     //     useUnifiedTopology: true
@@ -86,7 +87,7 @@ const mqttServer = require('net').createServer(aedes.handle)
 const mqttServerPort = 1883
 
 mqttServer.listen(mqttServerPort, function () {
-    console.log('mqtt server started and listening on port ', mqttServerPort)
+    console.log('Mqtt server started and listening on port ', mqttServerPort)
 })
 
 const mqttHttpServer = require('http').createServer()
@@ -96,7 +97,7 @@ const mqttHttpServerPort = 8888
 ws.createServer({ server: mqttHttpServer }, aedes.handle)
 
 mqttHttpServer.listen(mqttHttpServerPort, function () {
-    console.log('mqtt websocket server listening on port ', mqttHttpServerPort)
+    console.log('Mqtt websocket server listening on port ', mqttHttpServerPort)
 })
 
 const { client } = require('./mqtt/mqtt-client');

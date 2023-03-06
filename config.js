@@ -65,6 +65,46 @@ const SWAGGER_SETTINGS = {
     files: ['./routes/**/*.js'] //Path to the API handle folder
 };
 
+const generateUUID = () => {
+    let
+        d = new Date().getTime(),
+        d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now() * 1000)) || 0;
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        let r = Math.random() * 16;
+        if (d > 0) {
+            r = (d + r) % 16 | 0;
+            d = Math.floor(d / 16);
+        } else {
+            r = (d2 + r) % 16 | 0;
+            d2 = Math.floor(d2 / 16);
+        }
+        return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+    });
+};
+
+// const localConfig = {
+//     host: new URL("http://localhost"),
+//     port: 1883,
+//     username: "",
+//     password: "",
+//     clientId: "TL4K-SocketIO-Mqtt-Proxy"
+// }
+//
+// let MQTT_SETTINGS = {
+//     brokerUrl: "wss://mqtt.flespi.io",
+//     username: "FlespiToken ZZUuFrUpQdGIC5uV34q0esnHVEqzQnyGaiYGzITdJpKcl2VeVb2XudvdHJAmUYQV",
+//     password: "",
+//     clientId: `TL4K-SocketIO_${generateUUID()}`,
+//     topics: ["tl4k/devices/+/data", "tl4k/devices/+/command", "tl4k/sensornode"]
+//
+// }
+
+const fs = require('fs');
+
+const MQTT_SETTINGS = JSON.parse(fs.readFileSync('./config.json'));
+
+MQTT_SETTINGS.clientId = MQTT_SETTINGS.clientId + generateUUID();
+
 module.exports = {
     SERVER_PORT,
     SESSION_SECRET,
@@ -79,5 +119,6 @@ module.exports = {
     PRIVATE_KEY_PATH,
     CERTIFICATE_PATH,
     CA_PATH,
-    SWAGGER_SETTINGS
+    SWAGGER_SETTINGS,
+    MQTT_SETTINGS
 };
