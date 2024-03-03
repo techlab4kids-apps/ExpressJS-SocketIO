@@ -8,9 +8,6 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const expressSwagger = require('express-swagger-generator')(app);
 const srvConfig = require('./config');
-// const mongoose = require('mongoose');
-const { CONNECTION_TYPE, DB_HOST, DB_USERNAME, DB_PASSWORD, DB_PORT, DB_NAME, DB_QUERY_PARAMS } = srvConfig;
-const dbAuthString = (DB_USERNAME && DB_PASSWORD) ? `${srvConfig.DB_USERNAME}:${srvConfig.DB_PASSWORD}@` : '';
 let httpServer;
 
 
@@ -25,12 +22,11 @@ const corsOptions = {
 app.options('*', cors());
 app.use(
     cors({
-        // origin: `http://localhost:${srvConfig.SERVER_PORT}`,
-        origin: function(origin, callback) {
-            return callback(null, true);
-        },
-        optionsSuccessStatus: 200,
-        credentials: false,
+        // origin: `http://localhost:${srvConfig.SERVER_PORT}`
+        origin: cors({
+            origin: 'https://ide.mblock.cc/'
+        })
+
     }),
     session({
         saveUninitialized: true,
