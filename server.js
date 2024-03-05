@@ -110,7 +110,7 @@ const io = require('socket.io')(httpServer, {
         const headers = {
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
             "Access-Control-Allow-Origin": req.headers.origin, // Adjust this line to match your needs
-            "Access-Control-Allow-Credentials": true
+            "Access-Control-Allow-Credentials": false
         };
         res.writeHead(200, headers);
         res.end();
