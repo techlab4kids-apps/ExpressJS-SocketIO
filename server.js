@@ -10,31 +10,32 @@ const expressSwagger = require('express-swagger-generator')(app);
 const srvConfig = require('./config');
 let httpServer;
 
-
+const whitelist = ['http://localhost:3030', 'http://fls-server:3030', 'https://ide.mblock.cc'];
 /**
  * Configure middleware
  */
-const corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 app.options('*', cors());
-app.use(
-    cors({
-        // origin: `http://localhost:${srvConfig.SERVER_PORT}`
-        origin: cors({
-            origin: 'https://ide.mblock.cc/'
-        })
 
-    }),
+const corsOptions = {
+    credentials: true,
+    origin: (origin, callback) => {
+        if (whitelist.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+};
+app.use(
+    cors(corsOptions),
     session({
         saveUninitialized: true,
         secret: srvConfig.SESSION_SECRET,
         resave: true,
     }),
     cookieParser(),
-    bodyParser.json(),
+    bodyParser.json()
 );
 
 /**
@@ -78,23 +79,23 @@ httpServer.listen(srvConfig.SERVER_PORT, () => {
 
 // Mqtt aedes section
 
-const aedes = require('aedes')()
-const mqttServer = require('net').createServer(aedes.handle)
-const mqttServerPort = 1883
+const aedes = require('aedes')();
+const mqttServer = require('net').createServer(aedes.handle);
+const mqttServerPort = 1883;
 
-mqttServer.listen(mqttServerPort, function () {
-    console.log('Mqtt server started and listening on port ', mqttServerPort)
-})
+mqttServer.listen(mqttServerPort, function() {
+    console.log('Mqtt server started and listening on port ', mqttServerPort);
+});
 
-const mqttHttpServer = require('http').createServer()
-const ws = require('websocket-stream')
-const mqttHttpServerPort = 8888
+const mqttHttpServer = require('http').createServer();
+const ws = require('websocket-stream');
+const mqttHttpServerPort = 8888;
 
-ws.createServer({ server: mqttHttpServer }, aedes.handle)
+ws.createServer({ server: mqttHttpServer }, aedes.handle);
 
-mqttHttpServer.listen(mqttHttpServerPort, function () {
-    console.log('Mqtt websocket server listening on port ', mqttHttpServerPort)
-})
+mqttHttpServer.listen(mqttHttpServerPort, function() {
+    console.log('Mqtt websocket server listening on port ', mqttHttpServerPort);
+});
 
 const { client } = require('./mqtt/mqtt-client');
 // const mqtt = require('mqtt');
@@ -104,30 +105,30 @@ const { client } = require('./mqtt/mqtt-client');
  */
 const io = require('socket.io')(httpServer, {
     cors: {
-        origin: '*'
+        origin: '*',
     },
     handlePreflightRequest: (req, res) => {
         const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": req.headers.origin, // Adjust this line to match your needs
-            "Access-Control-Allow-Credentials": false
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            'Access-Control-Allow-Origin': req.headers.origin, // Adjust this line to match your needs
+            'Access-Control-Allow-Credentials': true,
         };
         res.writeHead(200, headers);
         res.end();
-    }
+    },
 });
 
 async function handleIoSocketEvent(eventName, currentSocketId, ...args) {
 
-    if(eventName == "mqtt command"){
+    if (eventName == 'mqtt command') {
         let messageObject = args[0];
         const deviceId = messageObject.deviceId;
         const topic = `tl4k/devices/${deviceId}/command`;
-        client.publish(topic, JSON.stringify(messageObject), {retain: true});
+        client.publish(topic, JSON.stringify(messageObject), { retain: true });
     }
-    const sockets = await io.fetchSockets()
+    const sockets = await io.fetchSockets();
     sockets.forEach(socket => {
-        if(socket.id != currentSocketId){
+        if (socket.id != currentSocketId) {
             socket.emit(eventName, ...args);
         }
     });
@@ -150,38 +151,38 @@ io.on('connection', function(socket) {
 client.on('message', (topic, message) => {
     console.log('Received message on Topic: ', topic);
 
-    if (!message){
+    if (!message) {
         console.log('Received empty message');
         return;
     }
 
     let messageObject;
 
-    try{
+    try {
         messageObject = JSON.parse(message.toString());
-    }catch(exception){
-        console.log("Error parsing: " + message.toString());
+    } catch (exception) {
+        console.log('Error parsing: ' + message.toString());
         return;
     }
 
     if (topic.includes('data')) {
         const regExp = new RegExp('tl4k\/devices\/(.*?)\/data');
-        let deviceId = ""
+        let deviceId = '';
 
         let match = regExp.exec(topic);
-        if(match) {
-            deviceId = match[1]
+        if (match) {
+            deviceId = match[1];
             console.log(deviceId);
             messageObject.deviceId = deviceId;
             io.emit('mqtt data', messageObject);
         }
     }
-    // else if (topic.includes('command')) {
-    //     // TODO add recipient to Mblock message
-    //     const deviceId = messageObject.deviceId;
-    //     const topic = `tl4k/devices/${deviceId}/command`;
-    //     client.publish(topic, messageObject);
-    //     io.emit('mqtt command', messageObject);
+        // else if (topic.includes('command')) {
+        //     // TODO add recipient to Mblock message
+        //     const deviceId = messageObject.deviceId;
+        //     const topic = `tl4k/devices/${deviceId}/command`;
+        //     client.publish(topic, messageObject);
+        //     io.emit('mqtt command', messageObject);
     // }
     else {
         io.emit('mqtt message', messageObject);
