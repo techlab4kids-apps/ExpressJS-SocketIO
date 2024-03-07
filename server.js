@@ -104,7 +104,10 @@ const { client } = require('./mqtt/mqtt-client');
  * Socket.io section
  */
 const io = require('socket.io')(httpServer, {
-    cors: cors(corsOptions),
+    cors: {
+        origin: whitelist,
+        methods: ["GET", "POST"]
+    },
     handlePreflightRequest: (req, res) => {
         const headers = {
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
