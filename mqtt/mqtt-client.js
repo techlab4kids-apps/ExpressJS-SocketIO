@@ -62,4 +62,46 @@ client['stream'].on('error', (error) => {
     client.end();
 });
 
+client.on('message', (topic, message) => {
+    console.log('Received message on Topic: ', topic);
+
+    if (!message) {
+        console.log('Received empty message');
+        return;
+    }
+
+    let messageObject;
+
+    try {
+        messageObject = JSON.parse(message.toString());
+    } catch (exception) {
+        console.log('Error parsing: ' + message.toString());
+        return;
+    }
+
+    if (topic.includes('data')) {
+        const regExp = new RegExp('tl4k\/devices\/(.*?)\/data');
+        let deviceId = '';
+
+        let match = regExp.exec(topic);
+        if (match) {
+            deviceId = match[1];
+            console.log(deviceId);
+            messageObject.deviceId = deviceId;
+            io.emit('mqtt data', messageObject);
+        }
+    }
+        // else if (topic.includes('command')) {
+        //     // TODO add recipient to Mblock message
+        //     const deviceId = messageObject.deviceId;
+        //     const topic = `tl4k/devices/${deviceId}/command`;
+        //     client.publish(topic, messageObject);
+        //     io.emit('mqtt command', messageObject);
+    // }
+    else {
+        io.emit('mqtt message', messageObject);
+    }
+
+});
+
 module.exports = { client };
