@@ -33,7 +33,7 @@ const DB_QUERY_PARAMS = "";
  * CERTIFICATE_PATH is the path where the cert.pem file is located
  * CA_PATH is the path where the chain.pem file is located
  */
-const HTTPS_ENABLED = false;
+const HTTPS_ENABLED = true;
 const PRIVATE_KEY_PATH = '/opt/psa/var/modules/letsencrypt/etc/live/YOUR-DOMAIN-NAME.com/privkey.pem';
 const CERTIFICATE_PATH = '/opt/psa/var/modules/letsencrypt/etc/live/YOUR-DOMAIN-NAME.com/cert.pem';
 const CA_PATH = '/opt/psa/var/modules/letsencrypt/etc/live/YOUR-DOMAIN-NAME.com/chain.pem';

@@ -10,6 +10,9 @@ const expressSwagger = require('express-swagger-generator')(app);
 const srvConfig = require('./config');
 const { socketIOInit } = require('./middleware/socketIO');
 const { mqttServerInit } = require('./middleware/mqtt');
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
 let httpServer;
 
 const whitelist = ['http://localhost:3030', 'http://fls-server:3030', 'https://ide.mblock.cc'];
@@ -52,12 +55,12 @@ if (srvConfig.SWAGGER_SETTINGS.enableSwaggerUI)
  * Configure http(s)Server
  */
 if (srvConfig.HTTPS_ENABLED) {
-    const privateKey = fs.readFileSync(srvConfig.PRIVATE_KEY_PATH, 'utf8');
-    const certificate = fs.readFileSync(srvConfig.CERTIFICATE_PATH, 'utf8');
-    const ca = fs.readFileSync(srvConfig.CA_PATH, 'utf8');
+    const privateKey = fs.readFileSync(path.join(__dirname, "localhost-key.pem"), 'utf8');
+    const certificate = fs.readFileSync(path.join(__dirname, "localhost.pem"), 'utf8');
+    // const ca = fs.readFileSync(srvConfig.CA_PATH, 'utf8');
 
     // Create a HTTPS server
-    httpServer = https.createServer({ key: privateKey, cert: certificate, ca: ca }, app);
+    httpServer = https.createServer({ key: privateKey, cert: certificate }, app);
 } else {
     // Create a HTTP server
     httpServer = http.createServer({}, app);

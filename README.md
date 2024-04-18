@@ -8,8 +8,8 @@ Specifically, this server allows messages exchange between devices supported by 
 
 - [x] Run locally (host should be reachable in devices network)
 - [x] Connects to Flespi service to allow data exchange even between devices on different networks
-- [ ] Will expose mqtt broker capabilites (not fully implemented for now)
-- [ ] Code starts as a POC so it started from forked github boilerplate
+- [x] Will expose mqtt broker capabilites (not fully implemented for now)
+- [x] Code starts as a POC so it started from forked github boilerplate
 
 ## :wrench: Configuration
 
